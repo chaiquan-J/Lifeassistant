@@ -28,7 +28,7 @@ page {
 			height: auto;
 			width: 700rpx;
 			position: relative;
-			z-index: 1;
+			z-index: 999;
 			top: 0;
 			left: 25rpx;
 			display: flex;
@@ -140,13 +140,47 @@ page {
 				align-items: center;
 				justify-content: center;
 			}
+			
+			.sevendays_cont{
+				height: 100%;
+				width: 100%;
+				// background-color: #30fcff;
+				margin: 0 auto;
+				// margin-top: 100rpx;
+				.card_title {
+					height: 80rpx;
+					width: 165rpx;
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+					align-items: center;
+				
+					text {
+						font-size: 28rpx;
+						color: #000;
+					}
+				
+					.title_hr {
+						height: 6rpx;
+						width: 100rpx;
+						background-color: #5D9DFF;
+						border-radius: 20rpx;
+						margin-top: 5rpx;
+					}
+				}
+				
+				.content{
+					height: auto;
+					width: 100%;
+				}
+			}
 		}
 		
 		.realtime_card{
 			height: auto;
 			width: 100%;
 			position: relative;
-			z-index: 1;
+			z-index: 2;
 			background-color: #FFFFFF;
 			border-radius: 20rpx 20rpx 0rpx 0rpx;
 			margin-top: 15rpx;
@@ -197,6 +231,7 @@ page {
 				}
 			}
 			
+			// 实时预报
 			.realtime_box{
 				height: 220rpx;
 				width: 100%;
@@ -244,8 +279,9 @@ page {
 			}
 		}
 		
+		// 生活卡片
 		.life_card{
-			height: 340rpx;
+			height: 320rpx;
 			width: 100%;
 			background-color: #FFFFFF;
 			
@@ -271,22 +307,24 @@ page {
 			}
 			
 			.cont_box{
-				height: 75%;
+				height: 230rpx;
 				width: 100%;
 				display: flex;
 				align-items: center;
+				// background-color: #007AFF;
 				
 				.life_swiper{
 					height: 100%;
 					width: 100%;
 					
 					.life_item{
-						height: auto;
+						height: 100%;
 						display: flex;
 						align-items: center;
+						// background-color: #4CD964;
 						
 						.item_box{
-							height: auto;
+							height: 90%;
 							width: 700rpx;
 							background-color: #FFFFFF;
 							margin: 0 auto;
@@ -326,6 +364,7 @@ page {
 								height: auto;
 								width: 660rpx;
 								font-size: 28rpx;
+								text-align: center;
 								margin-bottom: 10rpx;
 							}
 						}
@@ -374,7 +413,7 @@ page {
 			align-items: center;
 			
 			.calendar_box{
-				height: 265rpx;
+				height: auto;
 				width: 608rpx;
 				margin: 0 auto;
 				display: flex;
@@ -387,7 +426,7 @@ page {
 					height: auto;
 					width: 100%;
 					display: flex;
-					justify-content: space-around;
+					justify-content: space-between;
 					
 					.new_calendar{
 						height: 100rpx;
@@ -405,7 +444,7 @@ page {
 							display: block;
 							height:50rpx;
 							font-size: 28rpx;
-							margin-left: 10rpx;
+							margin-left: 5rpx;
 						}
 					}
 					
@@ -413,7 +452,7 @@ page {
 						height: auto;
 						display: flex;
 						align-items: center;
-						font-size: 64rpx;
+						font-size: 40rpx;
 					}
 				}
 				
@@ -421,6 +460,8 @@ page {
 					height: 1rpx;
 					width: 100%;
 					background-color: #BBBBBB;
+					margin-top: 20rpx;
+					margin-bottom: 20rpx;
 				}
 				
 				.calendar_taboo{
@@ -504,6 +545,15 @@ page {
 			margin-bottom: 25rpx;
 			padding-top: 15rpx;
 			padding-bottom: 20rpx;
+			
+			.box_title{
+				display: block;
+				height: auto;
+				width: 100%;
+				font-size: 35rpx;
+				text-align: center;
+				margin-bottom: 10rpx;
+			}
 			
 			.happy_text{
 				height: auto;
