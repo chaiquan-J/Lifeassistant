@@ -1,0 +1,531 @@
+page {
+	background-color: #f8f8f8;
+}
+
+.content {
+	position: relative;
+	
+	// 天气样式
+	.weather_box {
+		height: auto;
+		width: 100%;
+		position: relative;
+		// background-color: #007AFF;
+		margin-bottom: 20rpx;
+
+		.weather_bg {
+			height: 100%;
+			width: 100%;
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: 0;
+			background: url(../static/timg.jpg) no-repeat center -410rpx;
+			background-size: 860rpx;
+		}
+
+		.weather_cont {
+			height: auto;
+			width: 700rpx;
+			position: relative;
+			z-index: 1;
+			top: 0;
+			left: 25rpx;
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-end;
+			color: #FFFFFF;
+
+			.weather_right {
+				height: 100%;
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+
+				.weather_top {
+					height: 100rpx;
+					width: 100%;
+					display: flex;
+					align-items: center;
+
+					.weather_address {
+						display: flex;
+						margin-left: 5rpx;
+						align-items: center;
+
+						text {
+							font-size: 28rpx;
+							font-weight: 600;
+						}
+					}
+				}
+
+				.weather_center {
+					height: 250rpx;
+					width: 100%;
+					display: flex;
+					align-items: center;
+
+					.big_degree {
+						height: 200rpx;
+						width: 200rpx;
+						font-size: 148rpx;
+					}
+
+					.small_degree {
+						height: 100rpx;
+						width: auto;
+						margin-top: 20rpx;
+						margin-left: 30rpx;
+
+						.weather_img {
+							height: 50rpx;
+							width: 100%;
+							display: flex;
+							align-items: center;
+
+							image {
+								height: 60rpx;
+								width: 60rpx;
+								margin-top: 15rpx;
+							}
+
+							text {
+								font-size: 28rpx;
+							}
+						}
+
+						.degree_text {
+							height: auto;
+							width: 100%;
+							font-size: 28rpx;
+						}
+					}
+				}
+
+				.weather_bottom {
+					height: 85rpx;
+					width: 100%;
+					display: flex;
+					flex-direction: column;
+					justify-content: space-around;
+
+					.weather_date {
+						height: auto;
+						width: auto;
+						font-size: 28rpx;
+					}
+
+					.other_text {
+						height: auto;
+						width: 100%;
+						display: flex;
+						font-size: 24rpx;
+
+						.aqi_text {
+							margin-right: 10rpx;
+						}
+					}
+				}
+			}
+
+			.weather_left {
+				height: auto;
+				width: 228rpx;
+				position: absolute;
+				top: 375rpx;
+				right: 0;
+				font-size: 28rpx;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+		}
+		
+		.realtime_card{
+			height: auto;
+			width: 100%;
+			position: relative;
+			z-index: 1;
+			background-color: #FFFFFF;
+			border-radius: 20rpx 20rpx 0rpx 0rpx;
+			margin-top: 15rpx;
+			margin-bottom: 15rpx;
+			
+			.card_title {
+				height: 80rpx;
+				width: 165rpx;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+			
+				text {
+					font-size: 28rpx;
+				}
+			
+				.title_hr {
+					height: 6rpx;
+					width: 100rpx;
+					background-color: #5D9DFF;
+					border-radius: 20rpx;
+					margin-top: 5rpx;
+				}
+			}
+			
+			.sunrise_sunset{
+				height: 80rpx;
+				width: 450rpx;
+				position: absolute;
+				top: 0;
+				left: 170rpx;
+				display: flex;
+				align-items: center;
+				
+				.cont_box{
+					height: 100%;
+					flex: 1;
+					display: flex;
+					align-items: center;
+					font-size: 20rpx;
+					
+					image{
+						height: 50rpx;
+						width: 50rpx;
+						margin-right: 10rpx;
+					}
+				}
+			}
+			
+			.realtime_box{
+				height: 220rpx;
+				width: 100%;
+				// display: flex;
+				// align-items: center;
+				
+				.cont_box{
+					height: 200rpx;
+					width: 100%;
+					
+					.scroll_box{
+						height: 100%;
+						width: 100%;
+						white-space: nowrap;
+						
+						.scroll_cont{
+							display: inline-block;
+							height: 100%;
+							width: 120rpx;
+							margin-left: 20rpx;
+							margin-right: 20rpx;
+							
+							.scroll_details{
+								height: 100%;
+								width: 100%;
+								display: flex;
+								flex-direction: column;
+								align-items: center;
+								justify-content: space-around;
+								font-size: 28rpx;
+								
+								.realtime_degree{
+									width: auto;
+									margin-left: 10rpx;
+								}
+								
+								image{
+									height: 70rpx;
+									width: 70rpx;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		.life_card{
+			height: 340rpx;
+			width: 100%;
+			background-color: #FFFFFF;
+			
+			.card_title {
+				height: 80rpx;
+				width: 165rpx;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+			
+				text {
+					font-size: 28rpx;
+				}
+			
+				.title_hr {
+					height: 6rpx;
+					width: 100rpx;
+					background-color: #5D9DFF;
+					border-radius: 20rpx;
+					margin-top: 5rpx;
+				}
+			}
+			
+			.cont_box{
+				height: 75%;
+				width: 100%;
+				display: flex;
+				align-items: center;
+				
+				.life_swiper{
+					height: 100%;
+					width: 100%;
+					
+					.life_item{
+						height: auto;
+						display: flex;
+						align-items: center;
+						
+						.item_box{
+							height: auto;
+							width: 700rpx;
+							background-color: #FFFFFF;
+							margin: 0 auto;
+							border-radius: 20rpx;
+							box-shadow: 0rpx 1rpx 10rpx #e8e8e8;
+							display: flex;
+							flex-direction: column;
+							align-items: center;
+							
+							.item_title{
+								height: auto;
+								width: 100%;
+								display: flex;
+								justify-content: center;
+								align-items: center;
+								margin-top: 10rpx;
+								
+								image{
+									height: 50rpx;
+									width: 50rpx;
+								}
+								
+								text{
+									font-size: 35rpx;
+									font-weight: 600;
+									margin-left: 20rpx;
+									margin-right: 20rpx;
+								}
+							}
+							
+							.item_ivalue{
+								font-size: 30rpx;
+								margin: 10rpx 0rpx;
+							}
+							
+							.item_detail{
+								height: auto;
+								width: 660rpx;
+								font-size: 28rpx;
+								margin-bottom: 10rpx;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	// 黄历样式
+	.yellow_calendar {
+		height: auto;
+		width: 100%;
+		background-color: #FFFFFF;
+		margin-bottom: 20rpx;
+		padding-bottom: 25rpx;
+
+		.card_title {
+			height: 80rpx;
+			width: 165rpx;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		
+			text {
+				font-size: 28rpx;
+			}
+
+			.title_hr {
+				height: 6rpx;
+				width: 100rpx;
+				background-color: #5D9DFF;
+				border-radius: 20rpx;
+				margin-top: 5rpx;
+			}
+		}
+		
+		.content_box{
+			width: 700rpx;
+			height: auto;
+			border-radius: 20rpx;
+			box-shadow: 0rpx 1rpx 10rpx #e8e8e8;
+			margin: 0 auto;
+			display: flex;
+			align-items: center;
+			
+			.calendar_box{
+				height: 265rpx;
+				width: 608rpx;
+				margin: 0 auto;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+				margin-top: 30rpx;
+				margin-bottom: 30rpx;
+				
+				.calendar_date{
+					height: auto;
+					width: 100%;
+					display: flex;
+					justify-content: space-around;
+					
+					.new_calendar{
+						height: 100rpx;
+						width: auto;
+						display: flex;
+						align-items: flex-end;
+						
+						.day{
+							display: block;
+							height: 120rpx;
+							font-size: 98rpx;
+						}
+						
+						.month{
+							display: block;
+							height:50rpx;
+							font-size: 28rpx;
+							margin-left: 10rpx;
+						}
+					}
+					
+					.lunar_calendar{
+						height: auto;
+						display: flex;
+						align-items: center;
+						font-size: 64rpx;
+					}
+				}
+				
+				.calendar_hr{
+					height: 1rpx;
+					width: 100%;
+					background-color: #BBBBBB;
+				}
+				
+				.calendar_taboo{
+					height: auto;
+					width: 100%;
+					display: flex;
+					flex-direction: column;
+					justify-content: space-around;
+					
+					.taboo_box{
+						height: auto;
+						width: 100%;
+						display: flex;
+						
+						.taboo_round{
+							height: 45rpx;
+							width: 45rpx;
+							color: #FFFFFF;
+							text-align: center;
+							line-height: 45rpx;
+							border-radius: 100rpx;
+							font-size: 28rpx;
+							font-weight: 600;
+							margin-right: 25rpx;
+						}
+						
+						text{
+							width: 530rpx;
+							font-size: 30rpx;
+						}
+						
+						.should{
+							background-color: #5D9DFF;
+						}
+						
+						.avoid{
+							background-color: #f0d342;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	// 开心一刻样式
+	.happy_moment {
+		height: auto;
+		width: 100%;
+		margin-top: 5rpx;
+		background-color: #FFFFFF;
+		padding-bottom: 5rpx;
+		
+		.happy_title {
+			height: 80rpx;
+			width: 165rpx;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		
+			text {
+				font-size: 28rpx;
+			}
+		
+			.title_hr {
+				height: 6rpx;
+				width: 100rpx;
+				background-color: #5D9DFF;
+				border-radius: 20rpx;
+				margin-top: 5rpx;
+			}
+		}
+		
+		.happy_box{
+			height: auto;
+			width: 700rpx;
+			font-size: 28rpx;
+			border-radius: 20rpx;
+			box-shadow: 0rpx 1rpx 10rpx #e8e8e8;
+			margin: 0 auto;
+			margin-bottom: 25rpx;
+			padding-top: 15rpx;
+			padding-bottom: 20rpx;
+			
+			.happy_text{
+				height: auto;
+				width: 650rpx;
+				margin: 0 auto;
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+			}
+			
+			.text_hidden{
+				-webkit-line-clamp: 3;
+			}			
+		}
+		
+		.pull_up{
+			height:auto;
+			width: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			font-size: 28rpx;
+		}
+	}
+}
