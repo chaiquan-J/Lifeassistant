@@ -33,9 +33,9 @@
 					<view class="weather-line"></view>
 					<view class="min-weather">{{ item.night.templow }}</view>
 					<view class="feng-font">{{ item.night.winddirect}}</view>
-					<!-- <view class="day-state">
-						<label>{{ item.air }}</label>
-					</view> -->
+					<view class="day-state">
+						<label>{{ item.night.weather }}</label>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -78,10 +78,10 @@
 			initWeatherPointLine() {
 
 				var maxArry = this.weatherData.map(item => {
-					return item.max;
+					return item.day.temphigh;
 				});
 				var minArry = this.weatherData.map(item => {
-					return item.min;
+					return item.night.templow;
 				});
 				var max = [];
 				var min = [];
@@ -141,10 +141,10 @@
 			//处理柱状图
 			initWeatherPiller() {
 				var maxArry = this.weatherData.map(item => {
-					return item.max;
+					return item.day.temphigh;
 				});
 				var minArry = this.weatherData.map(item => {
-					return item.min;
+					return item.night.templow;
 				});
 				var pillarArray = [];
 

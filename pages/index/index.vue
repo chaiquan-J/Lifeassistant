@@ -32,7 +32,7 @@
 						查看近7天预报
 						<uni-icons color="#FFF" type="forward" size="20"></uni-icons>
 					</view>
-					<wyb-popup ref="sevendays" height="600" width="500" type="bottom" radius="6" :maskClickClose="false">
+					<wyb-popup ref="sevendays" height="600" width="500" type="bottom" radius="6">
 						<view class="popup-content">
 							<view class="sevendays_cont">
 								<view class="content"><mckou-weather :weatherData="weather.daily" ref="mckouWeather"></mckou-weather></view>
@@ -190,10 +190,6 @@ export default {
 		this.getpPosition();
 		this.current_date = this.currentDate();
 		// this.getYellow()
-		var that = this;
-		that.$nextTick(() => {
-			that.$refs.mckouWeather.init();
-		});
 	},
 	methods: {
 		// 获取地址信息
@@ -202,10 +198,14 @@ export default {
 			uni.getLocation({
 				type: 'wgs84',
 				success: function(res) {
-					console.log(res);
-					console.log('当前位置的经度：' + res.longitude);
-					console.log('当前位置的纬度：' + res.latitude);
+					// console.log(res);
+					// console.log(JSON.stringify(res))
+					// console.log('当前位置的经度：' + res.longitude);
+					// console.log('当前位置的纬度：' + res.latitude);
 					_this.getMap(res.latitude, res.longitude);
+					// _this.$nextTick(() => {
+					// 	_this.$refs.mckouWeather.init();
+					// });
 				},
 				fail: err => {
 					console.log(err);
@@ -231,6 +231,7 @@ export default {
 		},
 		// 获取天气
 		getMap(latitude, longitude) {
+			let that = this;
 			uni.request({
 				url: 'http://apis.map.qq.com/ws/geocoder/v1/',
 				data: {
@@ -250,14 +251,18 @@ export default {
 							appkey: '513c2d5bee6ec6a22531d764cf394ada'
 						},
 						success: res => {
-							// console.log(res)
-							// this.weather = res.data.result.result
 							this.weather = this.modifyImg(res.data.result.result);
 							console.log(this.weather);
-						},
-						fail: err => {
-							console.log(err);
+							// this.weather = res.data.result.result
+							// this.$nextTick(() => {
+							// 	this.$refs.mckouWeather.init();
+							// });
 						}
+
+						// }),
+						// fail: err => {
+						// 	console.log(err);
+						// }
 					});
 				},
 				fail: err => {
@@ -269,6 +274,7 @@ export default {
 		modifyImg(weather) {
 			let oldweather = weather;
 			let newWeather;
+			// 处理当天天气图标
 			if (oldweather.weather == '晴') {
 				oldweather.img = '../../static/qing-0.png';
 			} else if (oldweather.weather == '多云') {
@@ -279,7 +285,7 @@ export default {
 				oldweather.img = '../../static/zhenyu-0.png';
 			} else if (oldweather.weather == '冻雨') {
 				oldweather.img = '../../static/dongyu-0.png';
-			} else if (oldweather.weather == '小雨') {
+			} else if (oldweather.weather == '雨') {
 				oldweather.img = '../../static/xiaoyu-0.png';
 			} else if (oldweather.weather == '中雨') {
 				oldweather.img = '../../static/zhongyu-0.png';
@@ -318,6 +324,7 @@ export default {
 			} else {
 				oldweather.img = '../../static/yangsha-0.png';
 			}
+			// 处理24小时图标
 			for (let i = 0; i < oldweather.hourly.length; i++) {
 				if (oldweather.hourly[i].weather == '晴') {
 					oldweather.hourly[i].img = '../../static/qing-0.png';
@@ -368,6 +375,10 @@ export default {
 				} else {
 					oldweather.hourly[i].img = '../../static/yangsha-0.png';
 				}
+			}
+			// 处理天天气日期
+			for (let i = 0; i < oldweather.daily.length; i++) {
+				oldweather.daily[i].nwedate = oldweather.daily[i].date.substring(5,10)
 			}
 			newWeather = oldweather;
 			return newWeather;
