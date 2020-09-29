@@ -6,11 +6,14 @@
 				"navigationBarTitleText": "生活小助手"
 			}
 		}
-	    ,{
-            "path" : "pages/test/test",
-            "style" : {}
-        }
-    ],
+	],
+	"easycom": {
+		// 下载安装的方式需要前面的"@/"，npm安装的方式无需"@/"
+		// 下载安装方式
+		// "^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
+		// npm安装方式
+		"^u-(.*)": "uview-ui/components/u-$1/u-$1.vue"
+	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",

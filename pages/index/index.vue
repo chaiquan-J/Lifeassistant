@@ -1,5 +1,6 @@
 <template>
 	<view class="content">
+		<wyb-loading ref="weather" title="加载中" loading-type="scale-line" animation="zoom-lessen" />
 		<template v-if="weather">
 			<view class="weather_box">
 				<view class="weather_cont">
@@ -32,7 +33,7 @@
 						查看近7天预报
 						<uni-icons color="#FFF" type="forward" size="20"></uni-icons>
 					</view>
-					<wyb-popup ref="sevendays" height="600" width="500" type="bottom" radius="6">
+					<wyb-popup ref="sevendays" height="700" width="500" type="bottom" radius="6">
 						<view class="popup-content">
 							<view class="sevendays_cont">
 								<view class="content"><mckou-weather :weatherData="weather.daily" ref="mckouWeather"></mckou-weather></view>
@@ -136,16 +137,21 @@
 				<text>开心一刻</text>
 				<view class="title_hr"></view>
 			</view>
-			<view class="happy_box" @click="Unfoldtext">
-				<text class="box_title">标题标题</text>
-				<view class="happy_text" :class="{ text_hidden: happy }">
-					有一天晚上我俩一起吃西瓜，老大把西瓜籽很整洁的吐在了一张纸上很整洁的吐在了一张纸上很整洁的吐在了一张纸上纸上很整洁的吐在了一张纸上纸上很整洁的吐在了一张纸上纸上很整洁的吐在了一张纸上
+			<template v-if="joke">
+				<template v-for="(item, index) in joke.contentlist">
+					<view class="happy_box" @click="Unfoldtext(item.text, item.title)">
+						<text class="box_title">{{ item.title }}</text>
+						<view class="happy_text">{{ item.text }}</view>
+					</view>
+				</template>
+			</template>
+			<wyb-popup ref="joke" type="center" height="600" width="670" radius="6" :scrollY="true" :maskClickClose="false" :showCloseIcon="true" centerAnim="zoom-lessen">
+				<view class="popup-content">
+					<view class="joke_title">{{ joketitle }}</view>
+					<view class="joke_text">{{ joketext }}</view>
 				</view>
-			</view>
-			<view class="pull_up">
-				<uni-icons type="refreshempty" size="25"></uni-icons>
-				上拉继续刷新更多鸭
-			</view>
+			</wyb-popup>
+			<view class="pull_up"><u-loadmore :status="status" :load-text="loadText" /></view>
 		</view>
 	</view>
 </template>
@@ -154,10 +160,11 @@
 import uniIcons from '@/components/uni-icons/uni-icons.vue';
 import wybPopup from '@/components/wyb-popup/wyb-popup.vue';
 import mckouWeather from '@/components/mckou-weather/mckouWeather.vue';
+import wybLoading from '@/components/wyb-loading/wyb-loading.vue';
+
 export default {
 	data() {
 		return {
-			happy: true,
 			life_src: [
 				'../../static/kongtiao.png',
 				'../../static/yundong.png',
@@ -171,6 +178,7 @@ export default {
 			position: '',
 			current_date: null,
 			yellow_date: null,
+			joke_date: null,
 			// 黄历假数据
 			yellow_calendar: {
 				baiji: '丙不修灶必见灾殃 午不苫盖屋主更张',
@@ -183,13 +191,34 @@ export default {
 				yangli: '2020-08-31',
 				yi: '嫁娶 祭祀 祈福 求嗣 出行  动土 安床 掘井 破土 启钻',
 				yinli: '庚子(鼠)年七月十三'
-			}
+			},
+			status: 'loadmore',
+			loadText: {
+				loadmore: '往上拉加载更多哟~',
+				loading: '努力加载中~',
+				nomore: '真的一条都没有了'
+			},
+			joke: null,
+			// 笑话页数
+			jokepage: 1,
+			// 获取条数
+			maxResult: 5,
+			joketext: null,
+			joketitle: null
 		};
 	},
 	onLoad() {
+		// 获取天气
 		this.getpPosition();
-		this.current_date = this.currentDate();
-		// this.getYellow()
+		// 处理时间
+		this.currentDate();
+		// 获取笑话
+		this.getJoke();
+		// 获取黄历
+		this.getYellow()
+	},
+	onReachBottom() {
+		this.bootomJoke();
 	},
 	methods: {
 		// 获取地址信息
@@ -202,10 +231,8 @@ export default {
 					// console.log(JSON.stringify(res))
 					// console.log('当前位置的经度：' + res.longitude);
 					// console.log('当前位置的纬度：' + res.latitude);
+					_this.$refs.weather.showLoading();
 					_this.getMap(res.latitude, res.longitude);
-					// _this.$nextTick(() => {
-					// 	_this.$refs.mckouWeather.init();
-					// });
 				},
 				fail: err => {
 					console.log(err);
@@ -224,7 +251,7 @@ export default {
 					'custom-header': 'json' //自定义请求头信息
 				},
 				success: res => {
-					// console.log(res);
+					console.log(res);
 					this.yellow_calendar = res.data.result;
 				}
 			});
@@ -252,22 +279,97 @@ export default {
 						},
 						success: res => {
 							this.weather = this.modifyImg(res.data.result.result);
-							console.log(this.weather);
-							// this.weather = res.data.result.result
-							// this.$nextTick(() => {
-							// 	this.$refs.mckouWeather.init();
-							// });
+							this.$refs.weather.hideLoading();
+							// console.log(this.weather);
+						},
+						fail: err => {
+							console.log(err);
 						}
-
-						// }),
-						// fail: err => {
-						// 	console.log(err);
-						// }
 					});
 				},
 				fail: err => {
 					console.log(err);
 				}
+			});
+		},
+		// 获取笑话大全
+		getJoke() {
+			let than = this;
+			uni.request({
+				url: 'https://way.jd.com/showapi/wbxh',
+				data: {
+					time: than.joke_date,
+					page: than.jokepage,
+					maxResult: than.maxResult,
+					showapi_sign: 'bd0592992b4d4050bfc927fe7a4db9f3',
+					appkey: '513c2d5bee6ec6a22531d764cf394ada'
+				},
+				success: res => {
+					this.joke = res.data.result.showapi_res_body;
+					console.log(this.joke);
+				},
+				fail: err => {
+					console.log(err);
+				}
+			});
+		},
+		// 触底请求笑话数据
+		bootomJoke() {
+			let than = this;
+			if (this.maxResult <= 50) {
+				this.maxResult = this.maxResult + 5;
+				this.status = 'loading';
+				uni.request({
+					url: 'https://way.jd.com/showapi/wbxh',
+					data: {
+						time: this.joke_date,
+						page: this.jokepage,
+						maxResult: this.maxResult,
+						showapi_sign: 'bd0592992b4d4050bfc927fe7a4db9f3',
+						appkey: '513c2d5bee6ec6a22531d764cf394ada'
+					},
+					success: res => {
+						let data = res.data.result.showapi_res_body;
+						this.joke = data
+						this.status = 'loadmore';
+						// console.log(this.joke);
+					},
+					fail: err => {
+						console.log(err);
+					}
+				});
+			}else{
+				this.status = 'nomore';
+			}
+		},
+		// 当前日期
+		currentDate() {
+			let date = new Date();
+			let dateMonth = date.getMonth() + 1;
+			let dateDay = date.getDate();
+			let dateYer = date.getFullYear();
+			if (dateMonth < 10) {
+				dateMonth = '0' + dateMonth;
+			}
+			if (dateDay < 10) {
+				dateDay = '0' + dateDay;
+			}
+			this.yellow_date = dateYer + '-' + dateMonth + '-' + dateDay;
+			this.joke_date = date.toLocaleDateString().replace(/\//g, '-');
+			this.current_date = dateMonth + '月' + dateDay + '日';
+		},
+		// 弹出笑话
+		Unfoldtext(text, title) {
+			this.$refs.joke.show();
+			this.joketext = text;
+			this.joketitle = title;
+		},
+		// 7天预报弹出
+		openPopup() {
+			this.$refs.sevendays.show();
+			// 初始化折线图
+			this.$nextTick(() => {
+				this.$refs.mckouWeather.init();
 			});
 		},
 		// 处理天气数据
@@ -378,39 +480,17 @@ export default {
 			}
 			// 处理天天气日期
 			for (let i = 0; i < oldweather.daily.length; i++) {
-				oldweather.daily[i].nwedate = oldweather.daily[i].date.substring(5,10)
+				oldweather.daily[i].nwedate = oldweather.daily[i].date.substring(5, 10);
 			}
 			newWeather = oldweather;
 			return newWeather;
-		},
-		// 当前日期
-		currentDate() {
-			let date = new Date();
-			let dateMonth = date.getMonth() + 1;
-			let dateDay = date.getDate();
-			let dateYer = date.getFullYear();
-			if (dateMonth < 10) {
-				dateMonth = '0' + dateMonth;
-			}
-			if (dateDay < 10) {
-				dateDay = '0' + dateDay;
-			}
-			this.yellow_date = dateYer + '-' + dateMonth + '-' + dateDay;
-			return dateMonth + '月' + dateDay + '日';
-		},
-		// 展开收起笑话 有bug
-		Unfoldtext(e) {
-			this.happy = false;
-		},
-		// 7天预报弹出
-		openPopup() {
-			this.$refs.sevendays.show();
 		}
 	},
 	components: {
 		uniIcons,
 		wybPopup,
-		mckouWeather
+		mckouWeather,
+		wybLoading
 	}
 };
 </script>

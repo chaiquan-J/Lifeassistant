@@ -24,7 +24,7 @@
 				</view>
 				<view class="body-item" v-for="(item, index) in weatherData" :key="index">
 					<view class="day-font">{{ item.week }}</view>
-					<view class="day-time">{{ item.date }}</view>
+					<view class="day-time">{{ item.nwedate }}</view>
 					<view class="weather-font">{{ item.day.weather }}</view>
 					<!-- <view class="weather-image">
 						<image :src="item.weatherIcon" mode=""></image>
@@ -179,8 +179,9 @@
 
 		.more-day-report {
 			// 690
-			width: 92%;
+			width: 100%;
 			padding: 10rpx 4%;
+			margin: 0 auto;
 
 			.top-module {
 				width: 100%;
@@ -206,6 +207,7 @@
 					padding: 6rpx 20rpx;
 					border-radius: 40rpx;
 					font-size: 28rpx;
+					color: #373739 !important;
 
 					.label {
 						color: #373739;
@@ -249,7 +251,7 @@
 					width: 100%;
 					height: 100px;
 					left: 0;
-					top: 270rpx;
+					top: 220rpx;
 					z-index: 1;
 				}
 
@@ -258,7 +260,7 @@
 					width: 100%;
 					height: 80px;
 					left: 0;
-					top: 270rpx;
+					top: 230rpx;
 					z-index: 1;
 					display: flex;
 					flex-direction: row;

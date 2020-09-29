@@ -1,22 +1,14 @@
 <template>
 	<view v-if="isShow">
 		<view 
-		 :animation="maskAnim" 
-		 @tap.stop="close"
-		 class="wyb-popup-mask"
-		 :style="{
-			 backgroundColor: 'rgba(0, 0, 0, ' + maskAlpha + ')',
-			 zIndex: zIndex - 1}" />
-			 
-		<view 
+		 @tap.stop.prevent
+		 @touchmove.stop.prevent
 		 class="wyb-popup-box"
-		 id="wyb-popup-content-box"
-		 :animation="contentAnim"
 		 :style="{
-			 opacity: type === 'center' ? 0 : 1,
-			 transform: autoTransform,
+			 transitionDuration: duration + 'ms',
+			 opacity: contentOpacity || (type === 'center' ? 0 : 1),
+			 transform: contentTransform || autoTransform,
 			 zIndex: zIndex,
-			 position: 'fixed',
 			 borderTopRightRadius: type === 'center' || type === 'bottom' || type === 'left' ? radius + 'px' : 0,
 			 borderTopLeftRadius: type === 'center' || type === 'bottom' || type === 'right' ? radius + 'px' : 0,
 			 borderBottomRightRadius: type === 'center' || type === 'top' || type === 'left' ? radius + 'px' : 0,
@@ -48,15 +40,24 @@
 			
 			<scroll-view
 			 class="wyb-popup-container"
+			 :style="{
+				 width: autoWidth,
+				 height: autoHeight}"
 			 :enable-flex="true"
-			 :scroll-anchoring="true"
-			 :show-scrollbar="showScrollbar"
 			 :scroll-y="scrollY"
 			 :scroll-x="scrollX">
-				<slot></slot>
+				<view class="wyb-popup-slot"><slot></slot></view>
 			</scroll-view>
 		</view>
-
+		<view
+		 class="wyb-popup-mask"
+		 @tap.stop="close"
+		 @touchmove.stop.prevent
+		 :style="{
+			 opacity: maskOpacity,
+			 transitionDuration: duration + 'ms',
+			 backgroundColor: 'rgba(0, 0, 0, ' + maskAlpha + ')',
+			 zIndex: zIndex - 1}" />
 	</view>
 </template>
 
@@ -66,29 +67,22 @@
 			return {
 				w: uni.getSystemInfoSync().screenWidth,
 				h: uni.getSystemInfoSync().screenHeight,
-				eleW: 0,
-				eleH: 0,
 				isShow: false,
-				contentAnim: {},
-				maskAnim: {},
 				winReBottom: '',
 				winReTop: '',
-				sizeChange: false
+				sizeChange: false,
+				contentOpacity: null,
+				contentTransform: null,
+				maskOpacity: 0
 			}
 		},
 		computed: {
 			autoCenterTop() {
 				let statusBarHeight = uni.getSystemInfoSync().statusBarHeight
 				let windowHeight = uni.getSystemInfoSync().windowHeight
+				let popupHeight = this.rpxToPx(this.height)
 				let navHeight = 44
-				let result = (((this.h - this.rpxToPx(this.height)) / 2) - navHeight - statusBarHeight - this.negativeTop) + 'px'
-				// #ifdef H5
-				result = ((windowHeight - this.rpxToPx(this.height)) / 2 - this.negativeTop) + 'px'
-				// #endif
-				// #ifdef MP-WEIXIN
-				navHeight = wx.getMenuButtonBoundingClientRect().bottom
-				result = ((this.h - this.rpxToPx(this.height)) / 2 - statusBarHeight - navHeight) + 'px'
-				// #endif
+				let result = `${(windowHeight - popupHeight) / 2 - this.negativeTop}px`
 				return result
 			},
 			autoTransform() {
@@ -96,11 +90,11 @@
 				switch(this.type) {
 					case 'center':
 						if (this.centerAnim === 'zoom-lessen') {
-							result = 'scale(' + this.zoomLessenMulti + ')'
+							result = `scale(${this.zoomLessenMulti})`
 						} else if (this.centerAnim === 'slide-up') {
-							result = 'translateY(' + 100 * this.slideMulti + '%)'
+							result = `translateY(${100 * this.slideMulti}%)`
 						} else if (this.centerAnim === 'slide-down') {
-							result = 'translateY(' + -100 * this.slideMulti + '%)'
+							result = `translateY(${-100 * this.slideMulti}%)`
 						} else if (this.centerAnim === 'fade') {
 							result = 'auto'
 						}
@@ -122,13 +116,13 @@
 			},
 			autoWidth() {
 				if (this.type === 'center') {
-					return this.width + 'rpx'
+					return `${this.width}rpx`
 				} else {
 					if (this.mode === 'size-fixed') {
 						if (this.type === 'top' || this.type === 'bottom') {
 							return '100%'
 						} else {
-							return this.width + 'rpx'
+							return `${this.width}rpx`
 						}
 					} else {
 						if (this.type === 'top' || this.type === 'bottom') {
@@ -141,13 +135,13 @@
 			},
 			autoHeight() {
 				if (this.type === 'center') {
-					return this.height + 'rpx'
+					return `${this.height}rpx`
 				} else {
 					if (this.mode === 'size-fixed') {
 						if (this.type === 'left' || this.type === 'right') {
 							return '100%'
 						} else {
-							return this.height + 'rpx'
+							return `${this.height}rpx`
 						}
 					} else {
 						if (this.type === 'left' || this.type === 'right') {
@@ -176,7 +170,7 @@
 			},
 			autoLeft() {
 				if (this.type === 'center') {
-					return (this.w - this.rpxToPx(this.width)) / 2 + 'px'
+					return  `${(this.w - this.rpxToPx(this.width)) / 2}px`
 				} else if (this.type === 'right') {
 					return 'auto'
 				} else {
@@ -279,10 +273,6 @@
 			negativeTop: {
 				type: Number,
 				default: 0
-			},
-			showScrollbar: {
-				type: Boolean,
-				default: false
 			}
 		},
 		mounted() {
@@ -304,117 +294,84 @@
 			},
 			show() {
 				this.isShow = true
-				setTimeout(() => {
-					setTimeout(() => {
-						this.maskIn()
-						this.contentIn()
-						setTimeout(() => {
-							this.$emit('show', {
-								pageScroll: false, 
-								overflow: 'hidden'
-							})
-						}, this.duration)
-					}, 10)
-				}, 1)
+				// #ifndef H5
+				this.$nextTick(() => {
+					this.maskIn()
+					this.contentIn()
+					this.wait(this.duration + 1).then(() => {
+						this.$emit('show', {
+							pageScroll: false, 
+							overflow: 'hidden'
+						})
+					})
+				})
+				// #endif
+				// #ifdef H5
+				this.wait(10).then(() => {
+					this.maskIn()
+					this.contentIn()
+					this.wait(this.duration + 1).then(() => {
+						this.$emit('show', {
+							pageScroll: false, 
+							overflow: 'hidden'
+						})
+					})
+				})
+				// #endif
 			},
 			hide() {
 				this.contentOut()
 				this.maskOut()
-				setTimeout(() => {
+				this.wait(this.duration + 1).then(() => {
 					this.isShow = false
 					this.$emit('hide', {
 						pageScroll: true, 
 						overflow: 'scroll'
 					})
-					this.animation = {}
-					this.contentAnim = {}
-					this.maskAnim = {}
-				}, this.duration + 1)
+				})
 			},
 			contentIn() {
-				this.animation = uni.createAnimation({
-					duration: this.duration,
-					timingFunction: 'ease-out'
-				})
 				switch (this.type) {
 					case 'center':
 						if (this.centerAnim === 'zoom-lessen') {
-							this.animation.opacity(1).scale(1).step()
+							this.contentOpacity = 1
+							this.contentTransform = 'scale(1)'
 						} else if (this.centerAnim === 'slide-up' || this.centerAnim === 'slide-down') {
-							this.animation.opacity(1).translateY(0).step()
+							this.contentOpacity = 1
+							this.contentTransform = 'translateY(0)'
 						} else if (this.centerAnim === 'fade') {
-							this.animation.opacity(1).step()
+							this.contentOpacity = 1
 						}
 						break
 					case 'bottom':
 					case 'top':
-						this.animation.translateY(0).step()
+						this.contentTransform = 'translateY(0)'
 						break
 					case 'left':
 					case 'right':
-						this.animation.translateX(0).step()
+						this.contentTransform = 'translateX(0)'
 						break
 				}
-				this.contentAnim = this.animation.export()
-				this.getRect('#wyb-popup-content-box').then(res => {
-					this.eleW = res.width
-					this.eleH = res.height
-				})
 			},
 			contentOut() {
-				switch (this.type) {
-					case 'center':
-						if (this.centerAnim === 'zoom-lessen') {
-							this.animation.opacity(0).scale(this.zoomLessenMulti).step()
-						} else if (this.centerAnim === 'slide-up') {
-							this.animation.opacity(0).translateY(this.rpxToPx(this.height) * this.slideMulti + 'px').step()
-						} else if (this.centerAnim === 'slide-down') {
-							this.animation.opacity(0).translateY(0 - this.rpxToPx(this.height) * this.slideMulti + 'px').step()
-						} else if (this.centerAnim === 'fade') {
-							this.animation.opacity(0).step()
-						}
-						break
-					case 'bottom':
-						this.animation.translateY(this.eleH).step()
-						break
-					case 'top':
-						this.animation.translateY(0 - this.eleH).step()
-						break
-					case 'left':
-						this.animation.translateX(0 - this.eleW).step()
-						break
-					case 'right':
-						this.animation.translateX(this.eleW).step()
-						break
-				}
-				this.contentAnim = this.animation.export()
+				this.contentOpacity = null
+				this.contentTransform = null
 			},
 			maskIn() {
-				this.animation = uni.createAnimation({
-					duration: this.duration,
-					timingFunction: 'ease'
-				})
-				this.animation.opacity(1).step()
-				this.maskAnim = this.animation.export()
+				this.maskOpacity = 1
 			},
 			maskOut() {
-				this.animation.opacity(0).step()
-				this.maskAnim = this.animation.export()
+				this.maskOpacity = 0
 			},
 			rpxToPx(rpx) {
 				return rpx / 750 * this.w
 			},
-			getRect(selector) {
+			wait(time) {
 				return new Promise(resolve => {
-					uni.createSelectorQuery().in(this)['select'](selector).boundingClientRect(rect => {
-						if (rect) {
-							resolve(rect)
-						}
-					}).exec()
+					setTimeout(() => {
+						resolve()
+					}, time)
 				})
-			},
-			clear(e) {
-				e.stopPropagation()
 			}
 		}
 	}
@@ -423,13 +380,19 @@
 <style>
 	@import "./iconfont.css";
 	.wyb-popup-box{
-		position: relative;
+		position: fixed;
+		transition-timing-function: ease-out;
+		transition-property: opacity, transform;
 	}
 	
 	.wyb-popup-container {
-        width: 100%;
-		height: 100%;
 		position: relative;
+		box-sizing: border-box;
+	}
+	
+	.wyb-popup-slot {
+		width: 100%;
+		height: 100%;
 	}
 	
 	.wyb-popup-mask {
@@ -438,8 +401,8 @@
 		left: 0;
 		bottom: 0;
 		right: 0;
-		opacity: 0;
-		transform: scale(20);
+		transition-timing-function: ease;
+		transition-property: opacity, transform;
 	}
 	
 	.wyb-popup-close {
